@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+    <a href="index.html">⬅ Home</a>
+    <h1>My Cart</h1>
+</header>
+    <div id="cartContainer">
+    </div>
+    <div id="billSummary">
+    </div>
+    <script>
+        let cartItems = JSON.parse(localStorage.getItem("cart")) || [];
+        console.log(cartItems);
+        async function cartData(){
+            let cartContainer = document.getElementById("cartContainer");
+            let billSummary = document.getElementById("billSummary");
+            let totalPrice = 0;
+            for(let id of cartItems){
+                let url = `https://dummyjson.com/products/${id}`;
+                let res = await fetch(url);
+                let data = await res.json();
+                totalPrice += Math.ceil(data.price * 95);
+                let outerDiv = document.createElement("div");
+                let image = document.createElement("img");
+                let heading = document.createElement("h2");
+                let price = document.createElement("h3");
+                let remove = document.createElement("button");
+                image.src = data.thumbnail;
+                heading.innerText = data.title;
+                price.innerText = `₹${Math.ceil(data.price*95)}/-`;
+                remove.innerText = "Remove";
+                outerDiv.classList.add("cartDiv");
+                remove.style.backgroundColor = "red";
+                remove.style.color = "white";
+                remove.style.padding = "10px 20px";
+                remove.style.border = "none";
+                remove.style.fontWeight = "bold";
+                remove.addEventListener("click",function(){
+                    let index = cartItems.indexOf(id);
+                    cartItems.splice(index,1);
+                    localStorage.setItem("cart",JSON.stringify(cartItems));
+                    location.reload();
+                });
+
+                outerDiv.append(image,heading,price,remove);
+                cartContainer.append(outerDiv);
+
+            }
+
+            billSummary.innerHTML = `<h2>Bill Summary</h2> <h3>Total Items : ${cartItems.length}</h3><h3>Total Price : ₹${totalPrice}/-</h3>`;
+        }
+
+        cartData();
+
+    </script>
+
+</body>
+</html>
