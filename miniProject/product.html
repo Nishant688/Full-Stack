@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+    <a href="index.html">⬅ Home</a>
+    <h1>Product Details</h1>
+    <a href="cart.html">Cart</a>
+</header>
+    <script>
+        let productId=new URLSearchParams(window.location.search)
+        let id=productId.get("id")
+        console.log(id)
+
+        async function productData(){
+            let url = `https://dummyjson.com/products/${id}`
+            let res=await fetch(url)
+            let data=await res.json()
+            console.log(data);
+
+            let outerDiv = document.createElement("div")
+            let heading = document.createElement("h1")
+            let image = document.createElement("img")
+            let description = document.createElement("p")
+            let price = document.createElement("h2")
+            let rating = document.createElement("h3")
+            let brand = document.createElement("h3")
+            let category = document.createElement("h3")
+            let stock = document.createElement("h3")
+            let cart = document.createElement("button")
+
+            heading.innerText = data.title
+            image.src = data.thumbnail
+            description.innerText = data.description
+            price.innerText = `₹${Math.ceil(data.price*95)}/-`
+            rating.innerText = `Rating : ${data.rating}`
+            brand.innerText = `Brand : ${data.brand}`
+            category.innerText = `Category : ${data.category}`
+            stock.innerText = `Stock : ${data.stock}`
+            cart.innerText = "Add to Cart"
+
+            outerDiv.classList.add("productDiv")
+            cart.style.backgroundColor = "black"
+            cart.style.color = "white"
+            cart.style.padding = "10px 20px"
+            cart.style.border = "none"
+            cart.style.fontWeight = "bold"
+
+            cart.addEventListener("click",function(){
+                let cartItems = JSON.parse(localStorage.getItem("cart")) || [];
+                cartItems.push(data.id);
+                localStorage.setItem("cart",JSON.stringify(cartItems));
+                alert("Product Added Successfully");
+
+            })
+
+            outerDiv.append(heading,image,description,price,rating,brand,category,stock,cart)
+            document.body.append(outerDiv)
+
+        }
+        productData()
+         
+    </script>
+</body>
+</html>
